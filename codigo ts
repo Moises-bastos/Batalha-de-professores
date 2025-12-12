@@ -1,6 +1,6 @@
 const professores = [
     { nome: "Maykol", xp: 10, vida: 120, ataque: 25, defesa: 10, velocidade: 15 },
-    { nome: "Sekeff Iallen", xp: 8, vida: 140, ataque: 20, defesa: 12, velocidade: 10 },
+    { nome: "Sekeff e Iallen", xp: 8, vida: 140, ataque: 20, defesa: 12, velocidade: 10 },
     { nome: "Jivago", xp: 12, vida: 110, ataque: 30, defesa: 8,  velocidade: 18 },
     { nome: "Mayllon", xp: 9, vida: 150, ataque: 18, defesa: 14, velocidade: 9 },
     { nome: "Marcos", xp: 11, vida: 130, ataque: 22, defesa: 11, velocidade: 13 },
@@ -73,3 +73,4 @@ async function simularBatalhas() {
 }
 
 simularBatalhas();
+
