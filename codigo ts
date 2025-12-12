@@ -1,0 +1,75 @@
+const professores = [
+    { nome: "Maykol", xp: 10, vida: 120, ataque: 25, defesa: 10, velocidade: 15 },
+    { nome: "Sekeff Iallen", xp: 8, vida: 140, ataque: 20, defesa: 12, velocidade: 10 },
+    { nome: "Jivago", xp: 12, vida: 110, ataque: 30, defesa: 8,  velocidade: 18 },
+    { nome: "Mayllon", xp: 9, vida: 150, ataque: 18, defesa: 14, velocidade: 9 },
+    { nome: "Marcos", xp: 11, vida: 130, ataque: 22, defesa: 11, velocidade: 13 },
+];
+
+const workerCode = `
+onmessage = (event) => {
+    const t = event.data;
+
+    function calcularDano() {
+        const variacao = Math.floor(Math.random() * 6);
+        return t.ataque + variacao - t.defesa / 2;
+    }
+
+    function lutar() {
+        let vida = t.vida;
+        let rondas = 0;
+
+        while (vida > 0 && rondas < 10) {
+            rondas++;
+            const dano = calcularDano();
+            vida -= dano;
+        }
+
+        postMessage({
+            nome: t.nome,
+            rondas: rondas,
+            vidaFinal: vida
+        });
+    }
+
+    lutar();
+};
+`;
+
+const blob = new Blob([workerCode], { type: "application/javascript" });
+const workerURL = URL.createObjectURL(blob);
+
+async function simularBatalhas() {
+    console.log("=== INICIANDO BATALHAS ENTRE OS PROFESSORES ===");
+
+    const resultados: any[] = [];
+
+    await Promise.all(
+        professores.map(
+            (prof) =>
+                new Promise<void>((resolve) => {
+                    const worker = new Worker(workerURL);
+
+                    worker.postMessage(prof);
+
+                    worker.onmessage = (msg) => {
+                        resultados.push(msg.data);
+                        worker.terminate();
+                        resolve();
+                    };
+                })
+        )
+    );
+
+    console.log("\n=== RESULTADOS ===");
+
+    resultados.forEach((r) => {
+        console.log(
+            `${r.nome} lutou ${r.rondas} rondas e terminou com ${Math.floor(
+                r.vidaFinal
+            )} de vida`
+        );
+    });
+}
+
+simularBatalhas();
