@@ -1,76 +1,23 @@
-const professores = [
+function batalhaDeprofessores(){
+    console.log("Iniciando a batalha de professores!"); 
+    let professores = [
     { nome: "Maykol", xp: 10, vida: 120, ataque: 25, defesa: 10, velocidade: 15 },
-    { nome: "Sekeff e Iallen", xp: 5, vida: 250, ataque: 70, defesa: 17, velocidade: 19 },
-    { nome: "Jivago", xp: 12, vida: 110, ataque: 30, defesa: 8,  velocidade: 21 },
+    { nome: "Sekeff", xp: 8, vida: 140, ataque: 20, defesa: 12, velocidade: 10 },
+    { nome: "Jivago", xp: 12, vida: 110, ataque: 30, defesa: 8,  velocidade: 18 },
     { nome: "Mayllon", xp: 9, vida: 150, ataque: 18, defesa: 14, velocidade: 9 },
     { nome: "Marcos", xp: 11, vida: 130, ataque: 22, defesa: 11, velocidade: 13 },
+    { nome: "Iallen", xp: 13, vida: 115, ataque: 26, defesa: 13, velocidade: 11 },
 ];
+ const worker = new Worker("worker.js");
 
-const workerCode = `
-onmessage = (event) => {
-    const t = event.data;
+ 
+  worker.postMessage(professores);
 
-    function calcularDano() {
-        const variacao = Math.floor(Math.random() * 6);
-        return t.ataque + variacao - t.defesa / 2;
-    }
+  worker.onmessage = (event) => {
+    console.log("Resultado final:");
+    console.log(event.data);
+  };
 
-    function lutar() {
-        let vida = t.vida;
-        let rondas = 0;
-
-        while (vida > 0 && rondas < 10) {
-            rondas++;
-            const dano = calcularDano();
-            vida -= dano;
-        }
-
-        postMessage({
-            nome: t.nome,
-            rondas: rondas,
-            vidaFinal: vida
-        });
-    }
-
-    lutar();
-};
-`;
-
-const blob = new Blob([workerCode], { type: "application/javascript" });
-const workerURL = URL.createObjectURL(blob);
-
-async function simularBatalhas() {
-    console.log("=== INICIANDO BATALHAS ENTRE OS PROFESSORES ===");
-
-    const resultados: any[] = [];
-
-    await Promise.all(
-        professores.map(
-            (prof) =>
-                new Promise<void>((resolve) => {
-                    const worker = new Worker(workerURL);
-
-                    worker.postMessage(prof);
-
-                    worker.onmessage = (msg) => {
-                        resultados.push(msg.data);
-                        worker.terminate();
-                        resolve();
-                    };
-                })
-        )
-    );
-
-    console.log("\n=== RESULTADOS ===");
-
-    resultados.forEach((r) => {
-        console.log(
-            `${r.nome} lutou ${r.rondas} rondas e terminou com ${Math.floor(
-                r.vidaFinal
-            )} de vida`
-        );
-    });
-}
-
-simularBatalhas();
+   }
+batalhaDeprofessores();
 
