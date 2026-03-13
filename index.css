@@ -1,7 +1,11 @@
+body{
+    background-color: rgb(88, 72, 72);
+    text-align: center;
+    color: white;
+}
 h1{
     text-align: center;
-    color: rgb(58, 112, 165);
-    padding: 20px;
-    width: 100%;
-    font-size:50px;
+    color: white;
+    font-size: 50px;
+    border: 2px solid rgb(64, 60, 60);
 }
